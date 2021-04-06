@@ -172,8 +172,10 @@ namespace Units {
 
 				std::string name = GetSentence(command);
 
-				unit->RemoveAttr(name);
-				std::cout << "Attribute removed\n";
+				if (unit->RemoveAttr(name))
+					std::cout << "Attribute removed\n";
+				else
+					std::cout << "Couldn't find attribute\n";
 			}
 
 			else if (action == "vali" || action == "vals" || action == "valf") {
@@ -311,6 +313,49 @@ namespace Units {
 					std::cout << "Couldn't save file\n";
 				}
 				outFile.close();
+			}
+
+
+
+			else if (action == "help") {
+				std::cout 
+				<< "Unit address explain (accessing units):\n" 
+				<< "MAIN - main unit,\ti533 - unit with id 533,\n"
+				<< "LiSt - child unit with name \"LiSt\",\t4 - 5th child unit\n"
+				<< "\n"
+				<< "Unit address example:\n"
+				<< "MAIN>0>width\t(access main unit, 1st child unit, unit named \"width\")\n"
+				<< "3>0\t(access 4th unit in memory, 1st child)\n"
+				<< "i423>2\t(access unit with id 423, 3rd child unit)\n"
+				<< "\n"
+				<< "Open file:\topenf MAIN <source>\n"
+				<< "Save file:\tsavef <unit> <destination>\n"
+				<< "\n"
+				<< "Display:\tdisp <unit>\tDisplay all:\tdisp\n"
+				<< "Display as XML:\tdispx <unit>\n"
+				<< "\n"
+				<< "Change name\tname <unit> <name>\n"
+				<< "Change value (int/float/string):\tvali/valf/vals <unit> <value>\n"
+				<< "Set attribute (int/string):\tattri/attrs <unit> <name> <value>\n"
+				<< "Delete attribute:\tdelattr <unit> <name>\n"
+				<< "\n"
+				<< "Copy:\tcopy <unit> <parent>\n"
+				<< "Copy to memory:\tcopy <unit>\n"
+				<< "Create:\tcreate <parent>\n"
+				<< "Create in memory:\tcreate\n"
+				<< "Delete:\tdel <unit>\n"
+				<< "Move:\tmove <unit> <new parent> <new index>\n"
+				<< "\n"
+				<< "Working with templates:\n"
+				<< "Suggested way to create and use templates:\tcreate/copy unit to memory, set template names, values, attributes, then recreate unit from template\n"
+				<< "Set template name:\ttedit tname <unit>\n"
+				<< "Set static name (non-template):\ttedit sname <unit>\n"
+				<< "Set template value:\ttedit value <unit>\n"
+				<< "Set template attribute:\ttedit attr <unit> <name>\n"
+				<< "Recreating template:\n"
+				<< "To somewhere in tree:\ttcreate <template unit> <parent> <values> <value> ... <value>\n"
+				<< "To memory:\ttmemory <template unit> <value> <value> ... <value>\n"
+				<< "When recreating template, values are interpred as:\t name (if template) > value (if template) > attrs (in order in which they were added) > childs name (if template) > ...\n";
 			}
 
 

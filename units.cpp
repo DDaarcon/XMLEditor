@@ -84,19 +84,20 @@ namespace Units {
 		}
 		return false;
 	}
-	void Unit::RemoveAttr(std::string name) {
+	bool Unit::RemoveAttr(std::string name) {
 		for (std::vector<Attribute<long>>::iterator it = attrsInt.begin(); it != attrsInt.end() ; it++) {
 			if (it->name == name) {
 				attrsInt.erase(it);
-				return;
+				return true;
 			}
 		}
 		for (std::vector<Attribute<std::string>>::iterator it = attrsStr.begin(); it != attrsStr.end() ; it++) {
 			if (it->name == name) {
 				attrsStr.erase(it);
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	Unit* Unit::AddChild() {

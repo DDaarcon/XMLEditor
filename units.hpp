@@ -118,7 +118,7 @@ namespace Units {
 		bool AnyTemplateAttrs() const {return attrsTemp.size() > 0;}
 		bool GetAttr(std::string, long&) const;
 		bool GetAttr(std::string, std::string&) const;
-		void RemoveAttr(std::string);
+		bool RemoveAttr(std::string);
 
 		Unit* AddChild();
 		Unit* AddChild(Unit*);
