@@ -282,7 +282,7 @@ namespace Units {
 
 				if (inFile.is_open()) {
 					std::string prolog;
-					unit->ReadXML(inFile, &prolog);
+					unit->ReadXML(inFile, false, &prolog);
 
 					if (unit == mainUnit) mainProlog = prolog;
 

@@ -265,7 +265,7 @@ namespace Units {
 
 	}
 
-	void Unit::ReadXML(std::istream& is, std::string* prolog) {
+	void Unit::ReadXML(std::istream& is, bool forceString, std::string* prolog) {
 		char ch;
 		bool insideUnit = false;
 		bool insideValueField = false;
@@ -292,7 +292,8 @@ namespace Units {
 							is.get(ch);
 							if (prolog != nullptr) *prolog += ch;
 						} while (ch != '>');
-						// std::cout << *prolog;
+						
+						continue;
 					}
 
 					// comment detected
@@ -312,6 +313,7 @@ namespace Units {
 						continue;
 					}
 
+					// closing detected
 					else if (ch == '/') {
 						is.unget();
 						is.unget();
@@ -327,9 +329,17 @@ namespace Units {
 							is.get(ch);
 							if (ch == ' ') {
 								insideUnit = true;
+								insideValueField = false;
+								break;
+							}
+							if (ch == '/') {
+								is.unget();
+								insideUnit = true;
+								insideValueField = false;
 								break;
 							}
 							if (ch == '>') {
+								insideUnit = false;
 								insideValueField = true;
 								break;
 							}
@@ -345,15 +355,25 @@ namespace Units {
 				if (insideUnit) {
 					if (ch == ' ') continue;
 
-					std::string attrName;
-					std::string attrValue;
-
 					// close detected
 					if (ch == '>') {
 						insideUnit = false;
 						insideValueField = true;
 						continue;
 					}
+
+					// unit closing detected
+					if (ch == '/') {
+						is.get(ch);
+						while (ch != '>') is.get(ch);
+						insideUnit = false;
+						insideValueField = false;
+						break;
+					}
+
+					std::string attrName;
+					std::string attrValue;
+
 
 					// read attribute name
 					attrName = "";
@@ -371,14 +391,15 @@ namespace Units {
 						is.get(ch);
 					}
 
-					try {
-						int iV = std::stoi(attrValue);
-						AddAttr(attrName, iV);
-					} catch (const std::invalid_argument& ia) {
+					if (forceString) {
 						AddAttr(attrName, attrValue);
-					} catch (const std::out_of_range) {
-						std::cout << id << std::endl;
-						break;
+					} else {
+						try {
+							int iV = std::stoi(attrValue);
+							AddAttr(attrName, iV);
+						} catch (const std::exception& ia) {
+							AddAttr(attrName, attrValue);
+						}
 					}
 
 
@@ -389,10 +410,13 @@ namespace Units {
 					// first child or unit close
 					if (ch == '<') {
 						is.get(ch);
+
+						// unit closing detected
 						if (ch == '/') {
 							while (ch != '>') {
 								is.get(ch);
 							}
+							insideUnit = false;
 							insideValueField = false;
 							break;
 						} 
@@ -420,7 +444,7 @@ namespace Units {
 
 							Unit* unit = new Unit();
 							AddChild(unit);
-							unit->ReadXML(is, nullptr);
+							unit->ReadXML(is, forceString,nullptr);
 							continue;
 						}
 					} 
@@ -438,19 +462,20 @@ namespace Units {
 						}
 						is.unget();
 
-						try {
-							int iV = std::stoi(valueStr);
-							SetValue(iV);
-						} catch (const std::invalid_argument& ia) {
+						if (forceString) {
+							SetValue(valueStr);
+						} else {
 							try {
-								int fV = std::stof(valueStr);
-								SetValue(fV);
-							} catch (const std::invalid_argument& ia) {
-								SetValue(valueStr);
+								int iV = std::stoi(valueStr);
+								SetValue(iV);
+							} catch (const std::exception& ia) {
+								try {
+									int fV = std::stof(valueStr);
+									SetValue(fV);
+								} catch (const std::exception& ia) {
+									SetValue(valueStr);
+								}
 							}
-						} catch (const std::out_of_range) {
-							std::cout << id << std::endl;
-							break;
 						}
 
 						continue;

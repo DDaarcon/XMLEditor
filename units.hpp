@@ -281,10 +281,11 @@ namespace Units {
    /**
     * @brief  Reads data form file
     * @param  os: File to load from
+	* @param  forceString: Force all values and attributes to be string
     * @param  prolog: Pointer to string where prolog should be stored
     * @retval None
     */
-		void ReadXML(std::istream& os, std::string* prolog);
+		void ReadXML(std::istream& os, bool forceString, std::string* prolog);
 
    /**
     * @brief  Clones this unit and adds copy to parent
