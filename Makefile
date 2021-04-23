@@ -1,4 +1,4 @@
-xmleditor: units.o interface.o main.o
+all: units.o interface.o main.o
 	g++ units.o interface.o main.o -o xmleditor
 units.o:
 	g++ -c units.cpp -o units.o

@@ -1,3 +1,4 @@
 .vscode/
 xmleditor
 *.o
+*.xml

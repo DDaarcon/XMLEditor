@@ -129,7 +129,7 @@ namespace Units {
 		return nullptr;
 	}
 	Unit* Unit::GetChildAt(int index) const {
-		if (index >= children.size()) return nullptr;
+		if (index >= children.size() || index < 0) return nullptr;
 		else return children[index];
 	}
 	void Unit::RemoveChild(int id) {
@@ -158,9 +158,9 @@ namespace Units {
 		}
 	}
 	bool Unit::MoveChild(Unit* unit, int pos) {
-		if (pos >= children.size()) return false;
-
 		if (unit->parent == this) {
+			if (pos >= children.size()) return false;
+
 			int prevPos;
 
 			for (auto it = children.begin(); it != children.end(); it++) {
@@ -175,6 +175,7 @@ namespace Units {
 			children.insert(children.begin() + pos, unit);
 
 		} else {
+			if (pos > children.size()) return false;
 			unit->parent->children.erase(unit->parent->children.begin() + GetChildIndex(unit->GetId()));
 
 			unit->parent = this;
@@ -392,6 +393,7 @@ namespace Units {
 							while (ch != '>') {
 								is.get(ch);
 							}
+							insideValueField = false;
 							break;
 						} 
 						
@@ -471,6 +473,7 @@ namespace Units {
 	}
 
 	Unit* Unit::CloneAsSibling() const {
+		if (parent == nullptr) return nullptr;
 		Unit* unit = new Unit(*this);
 		parent->AddChild(unit);
 		return unit;

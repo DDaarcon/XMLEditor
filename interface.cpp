@@ -229,7 +229,7 @@ namespace Units {
 						std::cout << "Added variable attribute to unit template\n";
 					}
 				} else if (action2 == "value") {
-					unit->ValueIsTemp();
+					unit->SetTemplateValue();
 					std::cout << "Unit value set as variable\n";
 				}
 			}
